@@ -7,7 +7,9 @@ lemmatizer = Lemmatizer()
 normalizer = Normalizer()
 
 def preprocess(sent):
-    sent = sent.replace("؟!.،,?" ,"")
+    remove_characters = ["؟","!", ".","،","?",":","؛"]
+    for character in remove_characters:
+        sent = sent.replace(character, "")
     normalized = normalizer.normalize(sent)
     words = word_tokenize(normalized)
     stop_words = stopwords_list()
@@ -31,6 +33,6 @@ def read_file(file_name):
             sent = row[1]
             res = preprocess(sent)
             new_sent = ' '.join(res)
-            pairs.append((row[1], new_sent, row[2]))
-    df = pd.DataFrame(pairs, columns = ['old','new', 'tag'])
+            pairs.append((new_sent, row[2]))
+    df = pd.DataFrame(pairs, columns = ['text', 'tag'])
     df.to_csv('pre_processed_%s.csv'%file_name)
